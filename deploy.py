@@ -55,9 +55,9 @@ def main():
 
     # Step 1: Create 'build' directory as the working directory
     build_dir = 'build'
-    if os.path.exists(build_dir):
-        shutil.rmtree(build_dir)  # Remove existing directory
-    os.makedirs(build_dir)
+    if not os.path.exists(build_dir):
+         # Remove existing directory
+        os.makedirs(build_dir)
     os.chdir(build_dir)
 
     # Step 2: Clone the repository specified in the config
