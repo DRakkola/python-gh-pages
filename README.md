@@ -18,7 +18,7 @@ This script automates the process of deploying a React app to GitHub Pages using
 2. **Run the deployment script:**
 
     ```bash
-    python deploy_script.py
+    python deploy.py
     ```
 
 ## Configuration
