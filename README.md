@@ -1,4 +1,4 @@
-# python-gh-pages
+# React GitHub Pages Deployment Script
 
 This script automates the process of deploying a React app to GitHub Pages using the `gh-pages` npm package.
 
@@ -12,7 +12,7 @@ This script automates the process of deploying a React app to GitHub Pages using
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/your-repo.git
+    git clone https://github.com/DRakkola/python-gh-pages.git
     ```
 
 2. **Run the deployment script:**
@@ -20,6 +20,16 @@ This script automates the process of deploying a React app to GitHub Pages using
     ```bash
     python deploy_script.py
     ```
+
+## Configuration
+
+Before running the deployment script, make sure to adjust the configuration:
+
+- Open the `config.json` file in the root of your project.
+- Set the values for:
+    - `github_username`: Your GitHub username.
+    - `repo_name`: Your GitHub repository name.
+    - `project_root`: The root directory of your React project.
 
 ## Deployment Details
 
