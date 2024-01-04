@@ -36,43 +36,31 @@ def main():
     # Read config from config.json
     config = read_config()
 
-    # Set project root directory
-    project_root = config.get('project_root', '')
+    # Step 1: Create 'build' directory as the working directory
+    build_dir = 'build'
+    if not os.path.exists(build_dir):
+        os.makedirs(build_dir)
+    os.chdir(build_dir)
 
-    # Change directory to project root
-    os.chdir(project_root)
+    # Step 2: Clone the repository specified in the config
+    repo_url = 'https://github.com/{}/{}.git'.format(config.get('github_username', ''), config.get('repo_name', ''))
+    
+    output, error, return_code = run_command('git clone {} .'.format(repo_url))
+    if return_code == 0:
+        print("Repository cloned successfully.")
+    else:
+        print("Error cloning repository.")
+        return
 
-    # Step 0: Run npm install
-    output, error, return_code = run_command('npm install')
+    # Step 3: Run npm install
+    output, error, return_code = run_command('npm install', cwd=build_dir)
     if return_code == 0:
         print("npm packages installed successfully.")
     else:
         print("Error installing npm packages.")
+        return
 
-    # Step 1: Clone the repository specified in the config
-    repo_url = 'https://github.com/{}/{}.git'.format(config.get('github_username', ''), config.get('repo_name', ''))
-    work_dir = 'repo_clone'
-    
-    if not os.path.exists(work_dir):
-        output, error, return_code = run_command('git clone {} {}'.format(repo_url, work_dir))
-        if return_code == 0:
-            print("Repository cloned successfully.")
-        else:
-            print("Error cloning repository.")
-    else:
-        print("Repository already cloned.")
-
-    # Change directory to the cloned repository
-    os.chdir(work_dir)
-
-    # Step 2: Install gh-pages npm package
-    output, error, return_code = run_command('npm install gh-pages --save-dev')
-    if return_code == 0:
-        print("gh-pages npm package installed successfully.")
-    else:
-        print("Error installing gh-pages npm package.")
-
-    # Step 3: Open package.json file and add homepage property
+    # Step 4: Open package.json file and add homepage property
     package_json_path = 'package.json'
     with open(package_json_path, 'r') as file:
         data = json.load(file)
@@ -81,14 +69,14 @@ def main():
         json.dump(data, file, indent=2)
     print("Homepage property added to package.json.")
 
-    # Step 4: Add deployment scripts to package.json file
+    # Step 5: Add deployment scripts to package.json file
     data['scripts']['predeploy'] = 'npm run build'
     data['scripts']['deploy'] = 'gh-pages -d build'
     with open(package_json_path, 'w') as file:
         json.dump(data, file, indent=2)
     print("Deployment scripts added to package.json.")
 
-    # Step 5: Initialize a Git repository if not already initialized
+    # Step 6: Initialize a Git repository if not already initialized
     if not os.path.exists('.git'):
         output, error, return_code = run_command('git init')
         if return_code == 0:
@@ -98,7 +86,7 @@ def main():
     else:
         print("Git repository already initialized.")
 
-    # Step 6: Add a remote that points to the GitHub repository if not already added
+    # Step 7: Add a remote that points to the GitHub repository if not already added
     remote_url = 'https://github.com/{}/{}.git'.format(config.get('github_username', ''), config.get('repo_name', ''))
     if not is_remote_added(remote_url):
         output, error, return_code = run_command('git remote add origin {}'.format(remote_url))
@@ -109,17 +97,15 @@ def main():
     else:
         print("Remote already added.")
 
-    # Step 7: Check if 'gh-pages' branch exists
+    # Step 8: Check if 'gh-pages' branch exists
     if does_branch_exist('gh-pages'):
         print("Branch 'gh-pages' already exists. Removing 'gh-pages' cache directory.")
         shutil.rmtree('node_modules/gh-pages/.cache')
 
-    # Step 8: Push the React app to the GitHub repository
+    # Step 9: Push the React app to the GitHub repository
     output, error, return_code = run_command('npm run deploy')
     if return_code == 0:
         print("React app deployed to GitHub Pages.")
-    else:
-        print("Error deploying React app.")
 
     print("Deployment completed.")
 
