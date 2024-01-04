@@ -1,6 +1,7 @@
 import subprocess
 import json
 import os
+import shutil
 
 def run_command(command, cwd=None):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=cwd)
@@ -27,6 +28,10 @@ def is_remote_added(remote_url):
     output, _, _ = run_command('git remote -v')
     return remote_url in output
 
+def does_branch_exist(branch_name):
+    output, _, _ = run_command('git show-ref --verify refs/heads/{}'.format(branch_name))
+    return 'fatal: Not a valid ref' not in output
+
 def main():
     # Read config from config.json
     config = read_config()
@@ -44,14 +49,30 @@ def main():
     else:
         print("Error installing npm packages.")
 
-    # Step 1: Install gh-pages npm package
+    # Step 1: Clone the repository specified in the config
+    repo_url = 'https://github.com/{}/{}.git'.format(config.get('github_username', ''), config.get('repo_name', ''))
+    work_dir = 'repo_clone'
+    
+    if not os.path.exists(work_dir):
+        output, error, return_code = run_command('git clone {} {}'.format(repo_url, work_dir))
+        if return_code == 0:
+            print("Repository cloned successfully.")
+        else:
+            print("Error cloning repository.")
+    else:
+        print("Repository already cloned.")
+
+    # Change directory to the cloned repository
+    os.chdir(work_dir)
+
+    # Step 2: Install gh-pages npm package
     output, error, return_code = run_command('npm install gh-pages --save-dev')
     if return_code == 0:
         print("gh-pages npm package installed successfully.")
     else:
         print("Error installing gh-pages npm package.")
 
-    # Step 2: Open package.json file and add homepage property
+    # Step 3: Open package.json file and add homepage property
     package_json_path = 'package.json'
     with open(package_json_path, 'r') as file:
         data = json.load(file)
@@ -60,14 +81,14 @@ def main():
         json.dump(data, file, indent=2)
     print("Homepage property added to package.json.")
 
-    # Step 3: Add deployment scripts to package.json file
+    # Step 4: Add deployment scripts to package.json file
     data['scripts']['predeploy'] = 'npm run build'
     data['scripts']['deploy'] = 'gh-pages -d build'
     with open(package_json_path, 'w') as file:
         json.dump(data, file, indent=2)
     print("Deployment scripts added to package.json.")
 
-    # Step 4: Initialize a Git repository
+    # Step 5: Initialize a Git repository if not already initialized
     if not os.path.exists('.git'):
         output, error, return_code = run_command('git init')
         if return_code == 0:
@@ -77,7 +98,7 @@ def main():
     else:
         print("Git repository already initialized.")
 
-    # Step 5: Add a remote that points to the GitHub repository if not already added
+    # Step 6: Add a remote that points to the GitHub repository if not already added
     remote_url = 'https://github.com/{}/{}.git'.format(config.get('github_username', ''), config.get('repo_name', ''))
     if not is_remote_added(remote_url):
         output, error, return_code = run_command('git remote add origin {}'.format(remote_url))
@@ -88,7 +109,12 @@ def main():
     else:
         print("Remote already added.")
 
-    # Step 6: Push the React app to the GitHub repository
+    # Step 7: Check if 'gh-pages' branch exists
+    if does_branch_exist('gh-pages'):
+        print("Branch 'gh-pages' already exists. Removing 'gh-pages' cache directory.")
+        shutil.rmtree('node_modules/gh-pages/.cache')
+
+    # Step 8: Push the React app to the GitHub repository
     output, error, return_code = run_command('npm run deploy')
     if return_code == 0:
         print("React app deployed to GitHub Pages.")
