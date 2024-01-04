@@ -12,7 +12,7 @@ This script automates the process of deploying a React app to GitHub Pages using
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/DRakkola/python-gh-pages.git
+    git clone https://github.com/your-username/your-repo.git
     ```
 
 2. **Run the deployment script:**
