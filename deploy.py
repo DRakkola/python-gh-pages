@@ -38,8 +38,9 @@ def main():
 
     # Step 1: Create 'build' directory as the working directory
     build_dir = 'build'
-    if not os.path.exists(build_dir):
-        os.makedirs(build_dir)
+    if os.path.exists(build_dir):
+        shutil.rmtree(build_dir)  # Remove existing directory
+    os.makedirs(build_dir)
     os.chdir(build_dir)
 
     # Step 2: Clone the repository specified in the config
@@ -53,7 +54,7 @@ def main():
         return
 
     # Step 3: Run npm install
-    output, error, return_code = run_command('npm install', cwd=build_dir)
+    output, error, return_code = run_command('npm install')
     if return_code == 0:
         print("npm packages installed successfully.")
     else:
