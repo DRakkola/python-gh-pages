@@ -15,6 +15,18 @@ def run_command(command, cwd=None):
     print('-' * 50)
     return output_str, error_str, process.returncode
 
+def check_git_config(username):
+    git_name, _ = run_command('git config user.name')
+    if git_name.strip() != username:
+        print(f"Git user.name does not match the specified GitHub username in config.json.")
+        correct_name = input(f"Do you want to set the Git user.name to '{username}'? (yes/no): ").lower()
+        if correct_name == 'yes':
+            run_command(f'git config --global user.name "{username}"')
+            print("Git user.name updated successfully.")
+        else:
+            print("Please ensure that the Git user.name is set correctly before proceeding.")
+            exit()
+
 def read_config():
     config = {}
     try:
@@ -36,6 +48,9 @@ def main():
     # Read config from config.json
     config = read_config()
 
+    # Check Git configuration
+    check_git_config(config.get('github_username', ''))
+    
     # Step 1: Create 'build' directory as the working directory
     build_dir = 'build'
     if os.path.exists(build_dir):
