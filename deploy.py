@@ -55,6 +55,7 @@ def main():
 
     # Step 3: Run npm install
     output, error, return_code = run_command('npm install')
+    output, error, return_code = run_command('npm install gh-pages --save-dev')
     if return_code == 0:
         print("npm packages installed successfully.")
     else:
@@ -98,10 +99,14 @@ def main():
     else:
         print("Remote already added.")
 
+    
+    
     # Step 8: Check if 'gh-pages' branch exists
     if does_branch_exist('gh-pages'):
         print("Branch 'gh-pages' already exists. Removing 'gh-pages' cache directory.")
-        shutil.rmtree('node_modules/gh-pages/.cache')
+        cache_dir = os.path.join('node_modules', 'gh-pages', '.cache')  # Adjust path to look in the project root
+        if os.path.exists(cache_dir):
+            shutil.rmtree(cache_dir)
 
     # Step 9: Push the React app to the GitHub repository
     output, error, return_code = run_command('npm run deploy')
