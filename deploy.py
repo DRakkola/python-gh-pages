@@ -32,6 +32,23 @@ def does_branch_exist(branch_name):
     output, _, _ = run_command('git show-ref --verify refs/heads/{}'.format(branch_name))
     return 'fatal: Not a valid ref' not in output
 
+def remove_directory(directory):
+    for root, dirs, files in os.walk(directory, topdown=False):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                os.remove(file_path)
+            except PermissionError as e:
+                print(f"Permission error while removing file {file_path}. Error: {e}")
+
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            try:
+                os.rmdir(dir_path)
+            except PermissionError as e:
+                print(f"Permission error while removing directory {dir_path}. Error: {e}")
+
+
 def main():
     # Read config from config.json
     config = read_config()
@@ -106,7 +123,7 @@ def main():
         print("Branch 'gh-pages' already exists. Removing 'gh-pages' cache directory.")
         cache_dir = os.path.join('node_modules', 'gh-pages', '.cache')  # Adjust path to look in the project root
         if os.path.exists(cache_dir):
-            shutil.rmtree(cache_dir)
+            remove_directory(cache_dir)
 
     # Step 9: Push the React app to the GitHub repository
     output, error, return_code = run_command('npm run deploy')
