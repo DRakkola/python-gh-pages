@@ -1,4 +1,4 @@
-# React GitHub Pages Deployment Script
+# python-gh-pages
 
 This script automates the process of deploying a React app to GitHub Pages using the `gh-pages` npm package.
 
