@@ -25,7 +25,7 @@ This script automates the process of deploying a React app to GitHub Pages using
 
 Before running the deployment script, make sure to adjust the configuration:
 
-- Open the `config.json` file in the root of your project.
+- Open the `config.json` file in the root this script.
 - Set the values for:
     - `github_username`: Your GitHub username.
     - `repo_name`: Your GitHub repository name.
