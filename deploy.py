@@ -127,7 +127,7 @@ def main():
     output, error, return_code = run_command('npm run deploy')
     if return_code == 0:
         print("React app deployed to GitHub Pages.")
-    if not return_code == 0:
+    else:
         print("Deployment not completed.")
 
 if __name__ == "__main__":
