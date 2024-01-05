@@ -1,5 +1,7 @@
 # React GitHub Pages Deployment Script
 
+![1*NPPUQf__Nfv03OqJ81mWCg](https://github.com/DRakkola/python-gh-pages/assets/50802397/c574fb9d-6080-4aa1-8fbc-fa1e16df253f)
+
 This script automates the process of deploying a React app to GitHub Pages using the `gh-pages` npm package.
 
 ## Prerequisites
