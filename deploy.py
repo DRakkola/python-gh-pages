@@ -2,6 +2,7 @@ import subprocess
 import json
 import os
 import shutil
+import datetime
 
 def run_command(command, cwd=None):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=cwd)
@@ -55,9 +56,10 @@ def main():
 
     # Step 1: Create 'build' directory as the working directory
     build_dir = 'build'
-    if not os.path.exists(build_dir):
+    if os.path.exists(build_dir):
          # Remove existing directory
-        os.makedirs(build_dir)
+        os.rename(build_dir,'build_old' + str(datetime.datetime.now()))
+    os.makedirs(build_dir)
     os.chdir(build_dir)
 
     # Step 2: Clone the repository specified in the config
