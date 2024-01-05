@@ -6,6 +6,8 @@ This script automates the process of deploying a React app to GitHub Pages using
 
 - Node.js (Tested with Node v16.13.2)
 - npm (Node Package Manager)
+- Git (latest version) [Download Git](https://git-scm.com/downloads)
+- Python (Tested on Python v3.8/v3.9)
 
 ## Usage
 
@@ -15,7 +17,14 @@ This script automates the process of deploying a React app to GitHub Pages using
     git clone https://github.com/your-username/your-repo.git
     ```
 
-2. **Run the deployment script:**
+2. **Configure Git:**
+
+    ```bash
+    git config --global user.name "YOUR NAME"
+    git config --global user.email "name@email.com"
+    ```
+
+3. **Run the deployment script:**
 
     ```bash
     python deploy.py
@@ -50,9 +59,10 @@ Before running the deployment script, make sure to adjust the configuration:
 
     Click on the "Save" button.
 
-## Important Note
+## Important Notes
 
-- This script is tested with Node v16.13.2. Make sure you have a compatible version of Node.js installed.
+- Node version must be the same as the deployable project.
+- You need to be connected to GitHub on your browser for the first credential confirmation.
 
 ## License
 
