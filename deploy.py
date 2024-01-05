@@ -58,7 +58,14 @@ def main():
     build_dir = 'build'
     if os.path.exists(build_dir):
          # Remove existing directory
-        os.rename(build_dir,'build_old' + str(datetime.datetime.now()))
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        new_name = 'build_old' + timestamp
+
+        try:
+            shutil.move(build_dir, new_name)
+            print(f"Directory {build_dir} renamed to {new_name} successfully.")
+        except Exception as e:
+            print(f"Error renaming directory: {e}")
     os.makedirs(build_dir)
     os.chdir(build_dir)
 
